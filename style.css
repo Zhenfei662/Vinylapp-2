@@ -744,3 +744,43 @@ body.dark,
   inset: 0;
   background: rgba(0,0,0,0.35);
 }
+
+/* ==========================================================
+   ADD-VINYL PLACEHOLDER CARD (不会覆盖原样式)
+   ========================================================== */
+
+.add-card {
+  background: #fafafa;
+  border: 2px dashed #bcbcbc;
+  border-radius: 0;
+  height: 100%;
+  min-height: 330px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.add-card:hover {
+  background: #f0f0f0;
+  border-color: #888;
+  transform: translateY(-3px);
+}
+
+.add-card-content {
+  text-align: center;
+  color: #555;
+}
+
+.add-card-icon {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.add-card-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}

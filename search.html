@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vinylogs – Search</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="search.css">
+</head>
+
+<body class="dark">
+
+<header class="site-header dark-header">
+    <div class="logo">
+        <a href="home.html" class="dark-link">Vinylogs</a>
+    </div>
+
+<div class="nav-links">
+    <input id="nav-search" class="search-input" placeholder="Search vinyl..." />
+    <button id="nav-search-btn" class="nav-btn dark-btn">Search</button>
+
+    <a href="home.html" class="dark-link">Home</a>   <!-- ⭐ 新增 -->
+    <a href="index.html" class="dark-link">My Collection</a>
+</div>
+
+</header>
+
+<div class="search-results-container">
+    <!-- JS will inject search results here -->
+    <h2>Search Results</h2>
+    <div id="results-grid"></div>
+</div>
+
+<script src="search.js"></script>
+
+<!-- ================== MODAL POPUP ================== -->
+<div id="detail-modal" class="modal-overlay">
+    <div class="modal-box">
+        <span class="modal-close">&times;</span>
+
+        <img id="modal-cover" src="" class="modal-cover">
+
+        <h2 id="modal-title"></h2>
+        <p id="modal-artist"></p>
+        <p id="modal-year"></p>
+        <p id="modal-genre"></p>
+        <p id="modal-format"></p>
+    </div>
+</div>
+
+</body>
+
+</html>
+

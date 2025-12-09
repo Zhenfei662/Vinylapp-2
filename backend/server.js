@@ -1,58 +1,64 @@
 const express = require("express");
-const mongoose = require("mongoose");
+const axios = require("axios");
 const cors = require("cors");
 
 const app = express();
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
 
-// 🔥 正确连接你的数据库 vinylogs
-mongoose.connect(
-  "mongodb+srv://xuzhen:520Xuzhenfei@cluster0.h87rqm6.mongodb.net/vinylogs?retryWrites=true&w=majority"
-)
-.then(() => console.log("MongoDB Connected to vinylogs"))
-.catch(err => console.log("MongoDB ERROR: ", err));
+// ===============================
+// 🔑 Discogs Token
+// ===============================
+const DISCOGS_TOKEN = "hyqkNGqoZckmslmFbNTHxzueHizfCiPiEKGJfvjP";
 
+// ===============================
+// 🔍 API：搜索 Discogs
+// 前端用：GET http://localhost:5000/api/search?q=xxx
+// ===============================
+app.get("/api/search", async (req, res) => {
+    try {
+        const query = req.query.q || "vinyl";
 
-// Schema
-const VinylSchema = new mongoose.Schema({
-  title: String,
-  artist: String,
-  year: Number,
-  genre: String,
-  coverImage: String
+        const response = await axios.get(
+            "https://api.discogs.com/database/search",
+            {
+                params: { q: query, type: "release", per_page: 15 },
+                headers: {
+                    Authorization: `Discogs token=${DISCOGS_TOKEN}`
+                }
+            }
+        );
+
+        res.json(response.data.results);
+    } catch (err) {
+        console.error("Discogs Search Error:", err.message);
+        res.status(500).json({ error: "Discogs search failed" });
+    }
 });
 
-const Vinyl = mongoose.model("Vinyl", VinylSchema);
+// ===============================
+// Start Server
+// ===============================
+app.listen(5000, () => console.log("🔥 Server running on http://localhost:5000"));
 
-// Get all vinyls
-app.get("/vinyls", async (req, res) => {
-  const vinyls = await Vinyl.find();
-  res.json(vinyls);
-});
+const axios = require("axios");
 
-// Add vinyl
-app.post("/vinyls", async (req, res) => {
-  const newVinyl = await Vinyl.create(req.body);
-  res.json(newVinyl);
-});
+// 获取 release 详细信息
+app.get("/api/release/:id", async (req, res) => {
+    const releaseId = req.params.id;
 
-// Update vinyl
-app.put("/vinyls/:id", async (req, res) => {
-  const updated = await Vinyl.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true }
-  );
-  res.json(updated);
-});
+    try {
+        const response = await axios.get(
+            `https://api.discogs.com/releases/${releaseId}`,
+            {
+                headers: {
+                    Authorization: `Discogs token=${process.env.DISCOGS_TOKEN}`
+                }
+            }
+        );
+        res.json(response.data);
 
-// Delete vinyl
-app.delete("/vinyls/:id", async (req, res) => {
-  await Vinyl.findByIdAndDelete(req.params.id);
-  res.json({ message: "Deleted" });
-});
-
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
+    } catch (err) {
+        res.status(500).json({ error: "Release fetch failed" });
+    }
 });

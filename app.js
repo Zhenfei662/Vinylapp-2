@@ -14,7 +14,6 @@ function setupCollectionPage() {
 
   const modalOverlay = document.getElementById("vinylModal");
   const modalCloseBtn = document.getElementById("modalCloseBtn");
-  const openAddModalBtn = document.getElementById("openAddModalBtn");
   const vinylForm = document.getElementById("vinylForm");
   const vinylIdInput = document.getElementById("vinylId");
 
@@ -69,7 +68,6 @@ function setupCollectionPage() {
     modalOverlay.classList.add("hidden");
   }
 
-  openAddModalBtn.addEventListener("click", () => openModal("add"));
   modalCloseBtn.addEventListener("click", closeModal);
 
   /* ------------------------------------------
@@ -101,11 +99,30 @@ function setupCollectionPage() {
   });
 
   /* ------------------------------------------
-     RENDER CARDS
+     RENDER CARDS + ADD VINYL PLACEHOLDER
   -------------------------------------------*/
   function renderVinyls() {
     grid.innerHTML = "";
 
+    // ---------------------------
+    // 1️⃣ Add Vinyl 虚拟卡片（新增）
+    // ---------------------------
+    const addCard = document.createElement("article");
+    addCard.className = "vinyl-card add-card";
+
+    addCard.innerHTML = `
+      <div class="add-card-content">
+        <div class="add-card-icon">＋</div>
+        <div class="add-card-text">Add Vinyl</div>
+      </div>
+    `;
+
+    addCard.addEventListener("click", () => openModal("add"));
+    grid.appendChild(addCard);
+
+    // ---------------------------
+    // 2️⃣ 你的原本收藏卡片
+    // ---------------------------
     vinyls.forEach((v) => {
       const card = document.createElement("article");
       card.className = "vinyl-card";

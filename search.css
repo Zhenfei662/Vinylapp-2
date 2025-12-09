@@ -1,0 +1,187 @@
+/* =============== HEADER SAME AS HOME =============== */
+
+.site-header {
+    width: 100%;
+    background: #000;
+    padding: 18px 40px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+
+    border-bottom: 1px solid #222;
+}
+
+.logo a {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* INPUT 与 HOME PAGE 一样 */
+.search-input {
+    padding: 6px 10px;
+    background: white;
+    border: 1px solid #666;
+    border-radius: 6px;
+    width: 400px;
+    color: black;
+}
+
+/* Search 按钮 */
+.nav-btn {
+    padding: 6px 12px;
+    background: #1a1a1a;
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+}
+
+.dark-link {
+    color: white;
+    text-decoration: none;
+}
+
+.dark-link:hover {
+    text-decoration: underline;
+}
+
+/* ================= SEARCH RESULTS ================= */
+
+.search-results-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 40px;
+}
+
+.search-results-container h2 {
+    color: rgb(0, 0, 0);
+    margin-bottom: 20px;
+}
+
+/* 结果卡片的 GRID 列布局 */
+#results-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+/* 卡片样式 */
+.result-card {
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+}
+
+.result-card img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+}
+
+.result-info {
+    padding: 12px;
+}
+
+.result-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.result-meta {
+    margin-top: 6px;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+/* =============== MODAL OVERLAY =============== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.65);
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* =============== MODAL OVERLAY =============== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.65);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* =============== MODAL BOX =============== */
+.modal-box {
+    width: 480px;
+    background: #ffffff;
+    padding: 20px 28px;
+    color: black;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    position: relative;
+    text-align: center;
+    animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+    from { transform: scale(0.96); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+/* 封面图 */
+.modal-cover {
+    width: 100%;
+    height: auto;
+    margin-bottom: 16px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+}
+
+/* 标题 */
+#modal-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+/* 文本信息 */
+.modal-box p {
+    font-size: 1rem;
+    margin: 4px 0;
+}
+
+/* 右上角关闭按钮 */
+.modal-close {
+    position: absolute;
+    right: 18px;
+    top: 14px;
+    font-size: 30px;
+    color: #333;
+    cursor: pointer;
+    transition: 0.15s;
+}
+.modal-close:hover {
+    color: black;
+    transform: scale(1.15);
+}
