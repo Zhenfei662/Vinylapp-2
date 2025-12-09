@@ -3,18 +3,34 @@ const axios = require("axios");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
+
+// ==================================================
+// ⭐ CORS — 允许 GitHub Pages 访问 API（最重要）
+// ==================================================
+app.use(
+    cors({
+        origin: [
+            "http://localhost:5500",
+            "http://127.0.0.1:5500",
+            "https://zhenfei662.github.io",
+            "https://zhenfei662.github.io/Vinylapp-2"
+        ],
+        methods: ["GET", "POST"],
+        credentials: false
+    })
+);
+
 app.use(express.json());
 
-// ===============================
+// ==================================================
 // 🔑 Discogs Token
-// ===============================
+// ==================================================
 const DISCOGS_TOKEN = "hyqkNGqoZckmslmFbNTHxzueHizfCiPiEKGJfvjP";
 
-// ===============================
-// 🔍 API：搜索 Discogs
-// 前端用：GET http://localhost:5000/api/search?q=xxx
-// ===============================
+// ==================================================
+// 🔍 Search API
+// GET /api/search?q=vinyl
+// ==================================================
 app.get("/api/search", async (req, res) => {
     try {
         const query = req.query.q || "vinyl";
@@ -36,14 +52,10 @@ app.get("/api/search", async (req, res) => {
     }
 });
 
-// ===============================
-// Start Server
-// ===============================
-app.listen(5000, () => console.log("🔥 Server running on http://localhost:5000"));
-
-const axios = require("axios");
-
-// 获取 release 详细信息
+// ==================================================
+// 🔍 Release Detail API
+// GET /api/release/:id
+// ==================================================
 app.get("/api/release/:id", async (req, res) => {
     const releaseId = req.params.id;
 
@@ -52,13 +64,21 @@ app.get("/api/release/:id", async (req, res) => {
             `https://api.discogs.com/releases/${releaseId}`,
             {
                 headers: {
-                    Authorization: `Discogs token=${process.env.DISCOGS_TOKEN}`
+                    Authorization: `Discogs token=${DISCOGS_TOKEN}`
                 }
             }
         );
-        res.json(response.data);
 
+        res.json(response.data);
     } catch (err) {
+        console.error("Release fetch error:", err.message);
         res.status(500).json({ error: "Release fetch failed" });
     }
+});
+
+// ==================================================
+// 🚀 Start Server
+// ==================================================
+app.listen(5000, () => {
+    console.log("🔥 Server running at http://localhost:5000");
 });
