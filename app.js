@@ -1,5 +1,5 @@
 // app.js — Connected to LOCAL MongoDB API
-const API_URL = "https://vinylapp-2-1.onrender.com";
+const API_URL = "https://vinylapp-2-1.onrender.com/vinyls";
 
 document.addEventListener("DOMContentLoaded", () => {
   setupCollectionPage();
