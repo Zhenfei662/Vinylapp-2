@@ -19,10 +19,13 @@ async function searchDiscogs(q) {
     if (!q) return [];
 
     try {
-        const res = await fetch(`http://localhost:5000/api/search?q=${q}`);
+        const res = await fetch(`http://localhost:5000/api/search?q=${encodeURIComponent(q)}`);
         const data = await res.json();
 
-        return data.results ? data.results.slice(0, 20) : [];
+        // 后端返回的是数组
+        if (!Array.isArray(data)) return [];
+
+        return data.slice(0, 20);
 
     } catch (err) {
         console.error("Discogs Search Error:", err);
@@ -31,7 +34,7 @@ async function searchDiscogs(q) {
 }
 
 /* ======================================================
-   ADD TO COLLECTION → 存入 MongoDB
+   ADD TO COLLECTION → 存入 MongoDB  （修复路径）
 ====================================================== */
 async function addToCollection(item) {
     const payload = {
@@ -43,7 +46,7 @@ async function addToCollection(item) {
     };
 
     try {
-        const res = await fetch("http://localhost:5000/vinyls", {
+        const res = await fetch("http://localhost:5000/api/vinyls", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
@@ -60,7 +63,7 @@ async function addToCollection(item) {
 }
 
 /* ===============================
-   4. MORE → 打开 modal（已修复关闭问题）
+   4. MORE → 打开 modal
 ================================*/
 function openModal(item) {
     document.getElementById("modal-cover").src = item.cover_image || "picture/default.jpg";
@@ -73,12 +76,10 @@ function openModal(item) {
     const modal = document.getElementById("detail-modal");
     modal.style.display = "flex";
 
-    // 点击 × 关闭
     document.querySelector(".modal-close").onclick = () => {
         modal.style.display = "none";
     };
 
-    // 点击背景关闭
     modal.onclick = (e) => {
         if (e.target.id === "detail-modal") {
             modal.style.display = "none";
@@ -86,9 +87,8 @@ function openModal(item) {
     };
 }
 
-
 /* ===============================
-   5. 渲染结果（使用你的卡片样式）
+   5. 渲染结果
 ================================*/
 function renderResults(list) {
     const container = document.getElementById("results-grid");
@@ -101,7 +101,7 @@ function renderResults(list) {
 
     list.forEach(item => {
         const card = document.createElement("div");
-        card.classList.add("carousel-item", "vinyl-card"); // 和 home page 一样
+        card.classList.add("carousel-item", "vinyl-card");
 
         const cover = item.cover_image || "picture/default.jpg";
         const artist = item.artist || item.title?.split(" - ")[0] || "Unknown Artist";
@@ -121,10 +121,7 @@ function renderResults(list) {
             </div>
         `;
 
-        // ADD
         card.querySelector(".card-btn-primary").addEventListener("click", () => addToCollection(item));
-
-        // MORE → 打开弹窗
         card.querySelector(".more-btn").addEventListener("click", () => openModal(item));
 
         container.appendChild(card);

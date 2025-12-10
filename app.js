@@ -1,6 +1,5 @@
-// app.js — Connected to MongoDB via Render API
-
-const API_URL = "https://vinylapp.onrender.com/vinyls";
+// app.js — Connected to LOCAL MongoDB API
+const API_URL = "http://localhost:5000/api/vinyls";
 
 document.addEventListener("DOMContentLoaded", () => {
   setupCollectionPage();
@@ -20,7 +19,6 @@ function setupCollectionPage() {
   const modalTitle = document.getElementById("modalTitle");
   const modalSubtitle = document.getElementById("modalSubtitle");
 
-  // Delete Modal
   const deleteModal = document.getElementById("deleteModal");
   const closeDeleteModalBtn = document.getElementById("closeDeleteModal");
   const cancelDeleteBtn = document.getElementById("cancelDelete");
@@ -29,7 +27,7 @@ function setupCollectionPage() {
   let deleteTargetId = null;
 
   /* ------------------------------------------
-     FETCH DATA FROM API (MongoDB)
+     FETCH DATA FROM LOCAL API
   -------------------------------------------*/
   async function loadVinyls() {
     try {
@@ -50,7 +48,7 @@ function setupCollectionPage() {
       modalSubtitle.textContent = "Add a new record to your collection";
       vinylIdInput.value = "";
       vinylForm.reset();
-    } else if (mode === "edit") {
+    } else {
       modalTitle.textContent = "Edit Vinyl";
       modalSubtitle.textContent = "Update the details of this record";
 
@@ -99,14 +97,12 @@ function setupCollectionPage() {
   });
 
   /* ------------------------------------------
-     RENDER CARDS + ADD VINYL PLACEHOLDER
+     RENDER CARDS
   -------------------------------------------*/
   function renderVinyls() {
     grid.innerHTML = "";
 
-    // ---------------------------
-    // 1️⃣ Add Vinyl 虚拟卡片（新增）
-    // ---------------------------
+    // Add Vinyl Card
     const addCard = document.createElement("article");
     addCard.className = "vinyl-card add-card";
 
@@ -120,9 +116,7 @@ function setupCollectionPage() {
     addCard.addEventListener("click", () => openModal("add"));
     grid.appendChild(addCard);
 
-    // ---------------------------
-    // 2️⃣ 你的原本收藏卡片
-    // ---------------------------
+    // Vinyl Collection Cards
     vinyls.forEach((v) => {
       const card = document.createElement("article");
       card.className = "vinyl-card";
@@ -176,7 +170,7 @@ function setupCollectionPage() {
   }
 
   /* ------------------------------------------
-     HANDLE FORM SUBMIT (ADD / EDIT)
+     ADD / EDIT FORM
   -------------------------------------------*/
   vinylForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -192,7 +186,7 @@ function setupCollectionPage() {
     };
 
     if (id) {
-      // UPDATE
+      // EDIT
       await fetch(`${API_URL}/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -200,7 +194,7 @@ function setupCollectionPage() {
       });
       showMessage("Vinyl updated.");
     } else {
-      // CREATE
+      // ADD
       await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -214,7 +208,7 @@ function setupCollectionPage() {
   });
 
   /* ------------------------------------------
-     LOAD DATA FIRST TIME
+     INITIAL LOAD
   -------------------------------------------*/
   loadVinyls();
 

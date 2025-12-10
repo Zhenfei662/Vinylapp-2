@@ -1,9 +1,4 @@
 /* ====================
-   SEARCH JUMP
-==================== */
-
-
-/* ====================
    FETCH DISCOSGS DATA
 ==================== */
 
@@ -14,10 +9,10 @@ async function loadDiscogsData(query = "vinyl") {
 
     console.log("Discogs API:", json);
 
-    if (!json.results) return [];
+    // 后端返回的是数组，不是 {results: []}
+    if (!Array.isArray(json)) return [];
 
-    // 拿前 10 条
-    return json.results.slice(0, 15).map(item => {
+    return json.slice(0, 15).map(item => {
         const [artistName, albumName] =
             item.title?.includes(" - ") ? item.title.split(" - ") : ["Unknown Artist", item.title];
 
@@ -57,7 +52,7 @@ function createCard(item) {
 
 
 /* ================================
-   POPULATE 3 ROWS WITH DIFFERENT QUERIES
+   POPULATE 3 ROWS WITH QUERIES
 ================================ */
 
 async function populateCarousels() {
@@ -70,9 +65,10 @@ async function populateCarousels() {
 
     for (const trackId in queries) {
         const track = document.getElementById(trackId);
-        const items = await loadDiscogsData(queries[trackId]);
 
-        track.innerHTML = ""; // 清空原来的假数据
+        const items = await loadDiscogsData(queries[trackId]);
+        track.innerHTML = ""; // 清空旧内容
+
         items.forEach(i => track.innerHTML += createCard(i));
     }
 
@@ -94,6 +90,8 @@ function initInfiniteCarousel(trackId, dotsId, direction = -1) {
     const dots = document.getElementById(dotsId);
 
     const items = Array.from(track.children);
+
+    // 克隆节点实现无限滚动
     items.forEach(i => track.appendChild(i.cloneNode(true)));
 
     const total = items.length;
@@ -105,6 +103,7 @@ function initInfiniteCarousel(trackId, dotsId, direction = -1) {
         if (!paused) {
             pos += 0.4 * direction;
 
+            // 无限循环
             if (direction === -1 && pos <= -total * cardWidth) pos = 0;
             if (direction === 1 && pos >= total * cardWidth) pos = 0;
 
@@ -115,17 +114,22 @@ function initInfiniteCarousel(trackId, dotsId, direction = -1) {
 
     animate();
 
-    // pause on hover
+    // hover 暂停
     track.addEventListener("mouseenter", () => paused = true);
     track.addEventListener("mouseleave", () => paused = false);
 
-    // create dots
+    // dots
     dots.innerHTML = "";
     for (let i = 0; i < total / 4.5; i++) {
         dots.innerHTML += `<div></div>`;
     }
-    dots.children[0].classList.add("active");
+    dots.children[0]?.classList.add("active");
 }
+
+
+/* ====================
+   HERO SEARCH BUTTON
+==================== */
 
 document.getElementById("hero-search-btn").addEventListener("click", () => {
     const q = document.getElementById("hero-search").value.trim();
