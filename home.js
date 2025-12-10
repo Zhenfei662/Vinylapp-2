@@ -3,7 +3,7 @@
 ==================== */
 
 async function loadDiscogsData(query = "vinyl") {
-    const url = `http://localhost:5000/api/search?q=${encodeURIComponent(query)}`;
+    const url = `https://vinylapp-2-1.onrender.com/api/search?q=${encodeURIComponent(query)}`;
     const res = await fetch(url);
     const json = await res.json();
 
@@ -135,3 +135,4 @@ document.getElementById("hero-search-btn").addEventListener("click", () => {
     const q = document.getElementById("hero-search").value.trim();
     if (q) window.location.href = `search.html?query=${q}`;
 });
+
