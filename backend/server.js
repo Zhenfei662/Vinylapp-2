@@ -1,5 +1,8 @@
 console.log("🔥 CURRENT SERVER FILE IS RUNNING:", __filename);
+
+// Load environment variables
 require("dotenv").config();
+
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
@@ -7,34 +10,31 @@ const mongoose = require("mongoose");
 
 const app = express();
 
-// ===============================
-// CORS
-// ===============================
+/* ===============================
+   CORS
+================================*/
 app.use(
   cors({
-    origin: ["http://localhost:5500", "http://127.0.0.1:5500"],
+    origin: "*", // Render 部署必须允许所有来源，否则前端无法访问
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
 
 app.use(express.json());
 
-// ===============================
-// MongoDB Connect
-// ===============================
+/* ===============================
+   MongoDB Connect
+================================*/
 console.log("MONGO_URL =", process.env.MONGO_URL);
 
 mongoose
-  .connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGO_URL)
   .then(() => console.log("✅ MongoDB connected (Atlas)"))
   .catch((err) => console.log("❌ MongoDB Error:", err));
 
-// ===============================
-// Vinyl Schema
-// ===============================
+/* ===============================
+   Vinyl Schema
+================================*/
 const VinylSchema = new mongoose.Schema({
   title: String,
   artist: String,
@@ -45,19 +45,22 @@ const VinylSchema = new mongoose.Schema({
 
 const Vinyl = mongoose.model("Vinyl", VinylSchema);
 
-// ===============================
-// Discogs Search API (保持 /api/... 不动)
-// ===============================
+/* ===============================
+   Discogs Search API
+================================*/
 app.get("/api/search", async (req, res) => {
   try {
     const query = req.query.q || "vinyl";
 
-    const response = await axios.get("https://api.discogs.com/database/search", {
-      params: { q: query, type: "release", per_page: 15 },
-      headers: {
-        Authorization: `Discogs token=${process.env.DISCOGS_TOKEN}`,
-      },
-    });
+    const response = await axios.get(
+      "https://api.discogs.com/database/search",
+      {
+        params: { q: query, type: "release", per_page: 15 },
+        headers: {
+          Authorization: `Discogs token=${process.env.DISCOGS_TOKEN}`,
+        },
+      }
+    );
 
     res.json(response.data.results);
   } catch (err) {
@@ -66,9 +69,9 @@ app.get("/api/search", async (req, res) => {
   }
 });
 
-// ===============================
-// Discogs Release Detail API
-// ===============================
+/* ===============================
+   Discogs Release Details
+================================*/
 app.get("/api/release/:id", async (req, res) => {
   try {
     const response = await axios.get(
@@ -85,17 +88,17 @@ app.get("/api/release/:id", async (req, res) => {
   }
 });
 
-// ===============================
-// CRUD: Vinyl Collection  (方案 A) —— 去掉 /api 前缀
-// ===============================
+/* ===============================
+   CRUD — Vinyl Collection
+================================*/
 
-// GET all
+// GET all records
 app.get("/vinyls", async (req, res) => {
   const list = await Vinyl.find();
   res.json(list);
 });
 
-// POST create
+// ADD record
 app.post("/vinyls", async (req, res) => {
   try {
     const vinyl = new Vinyl(req.body);
@@ -107,7 +110,7 @@ app.post("/vinyls", async (req, res) => {
   }
 });
 
-// PUT update
+// UPDATE record
 app.put("/vinyls/:id", async (req, res) => {
   try {
     await Vinyl.findByIdAndUpdate(req.params.id, req.body);
@@ -118,7 +121,7 @@ app.put("/vinyls/:id", async (req, res) => {
   }
 });
 
-// DELETE remove
+// DELETE record
 app.delete("/vinyls/:id", async (req, res) => {
   try {
     await Vinyl.findByIdAndDelete(req.params.id);
@@ -129,9 +132,11 @@ app.delete("/vinyls/:id", async (req, res) => {
   }
 });
 
-// ===============================
-// Start Server
-// ===============================
-app.listen(5000, () => {
-  console.log("🔥 Server running at http://localhost:5000");
+/* ===============================
+   Start Server — Render 必须使用动态端口
+================================*/
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
