@@ -13,20 +13,20 @@ document.getElementById("nav-search-btn").addEventListener("click", () => {
 });
 
 /* ===============================
-   3. 调用后端 Discogs API
+   3. 调用后端 Discogs API（改成 Render）
 ================================*/
 async function searchDiscogs(q) {
     if (!q) return [];
 
     try {
-        const res = await fetch(`http://localhost:5000/api/search?q=${encodeURIComponent(q)}`);
+        const res = await fetch(
+            `https://vinylapp-2-1.onrender.com/api/search?q=${encodeURIComponent(q)}`
+        );
         const data = await res.json();
 
-        // 后端返回的是数组
         if (!Array.isArray(data)) return [];
 
         return data.slice(0, 20);
-
     } catch (err) {
         console.error("Discogs Search Error:", err);
         return [];
@@ -34,7 +34,7 @@ async function searchDiscogs(q) {
 }
 
 /* ======================================================
-   ADD TO COLLECTION → 存入 MongoDB  （修复路径）
+   ADD TO COLLECTION → 存入 MongoDB (改成 Render 的 /vinyls)
 ====================================================== */
 async function addToCollection(item) {
     const payload = {
@@ -46,7 +46,7 @@ async function addToCollection(item) {
     };
 
     try {
-        const res = await fetch("http://localhost:5000/api/vinyls", {
+        const res = await fetch("https://vinylapp-2-1.onrender.com/vinyls", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
@@ -55,7 +55,6 @@ async function addToCollection(item) {
         if (!res.ok) throw new Error("Add failed.");
 
         alert(`✔ Added to My Collection: ${payload.title}`);
-
     } catch (err) {
         console.error("Add error:", err);
         alert("Failed to add item.");
@@ -137,3 +136,4 @@ function renderResults(list) {
     const results = await searchDiscogs(query);
     renderResults(results);
 })();
+
